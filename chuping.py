@@ -158,6 +158,14 @@ def imprimemela(prefixe, host, resultat, ms, coloret, debug = ""):
     ip = "(" + host["ip"] +")" 
     ip = ip.rjust(17)
 
+    # Apliquem fondo segons l'ordre
+    fondoFluix = pantalla.on_color_rgb(50, 50, 50)
+    fondoFortet = pantalla.on_color_rgb(30, 30, 30)
+    fondo = fondoFluix
+    ordre = 0
+    ordre=host["ordre"] 
+    if  ordre % 2 == 0: fondo = fondoFortet
+
     # Tenim que discernir si estem fent petició, o estem mostrat resultat
     if resultat != "":
         resultat = resultat.ljust(10)
@@ -165,10 +173,14 @@ def imprimemela(prefixe, host, resultat, ms, coloret, debug = ""):
         fallos = str (host["fallos"])
         fallos = fallos.rjust(6)
         fallos = f"{coloret}-  Fallos:{fallos}  {Style.RESET_ALL}"
+
         # Formatejem el historial, per a que sempre mostre 10 espais, y només els 10 últims, així fem el efecte de gráfica
-        historial = historial.ljust(40)
-        historial = historial[-40:]
-        historial = f"{Fore.BLACK}▁{Style.RESET_ALL} |" + historial + "|"
+        historial = historial.ljust(20)
+        historial = historial[-20:]
+        historial = historial.replace("", " ") # les añadimos espacios
+        historial = historial.replace (".", f"{Fore.RED}█{Fore.LIGHTWHITE_EX}") # cambiamos y coloreamos a bloque color ROJO
+
+        historial = f"{fondo} " + historial
 
     else: # si no te resultat, entenem que estem imprint la linia de mostreig.
         fallos = ""
@@ -178,10 +190,11 @@ def imprimemela(prefixe, host, resultat, ms, coloret, debug = ""):
 
     if ms !="": # si no tenim ms es perque encara no estem mostrant resultat
         ms = ms.center(7) 
-        ms = f"{Back.BLUE} {ms} {Style.RESET_ALL}"
+        ms = f"{Back.BLUE} {ms} "
 
     # preparem la traca final
-    imprimemelo = f"{prefixe}{nom}. {ip}: {resultat}{fallos}{ms}{historial}{debug}"
+    imprimemelo = f"{fondo}{Fore.LIGHTWHITE_EX}{prefixe}{nom}. {ip}: {resultat}{fallos}{ms}{fondo}{historial}{debug}"
+
     print( pantalla.move_yx(host["ordre"] + primeraLinia, 0) + imprimemelo )
 
 
@@ -189,7 +202,7 @@ def imprimemela(prefixe, host, resultat, ms, coloret, debug = ""):
 #                           L A G M E T E R  
 # -----------------------------------------------------------------------------------------------------
 def lagMeter(ms=1000): # Pre-condición Trivial
-    resultat = f"{Fore.RED}█{Style.RESET_ALL}"
+    resultat = "." # valor trivial: no hay respuesta
        
     #  ▁ ▃ ▅ ▇
     # Sel·leccionem els umbrals
@@ -212,7 +225,7 @@ def lagMeter(ms=1000): # Pre-condición Trivial
     # 5 - Desconectado: > 1000 >
     # no cal fer res, es el valor trivial
 
-    return resultat + " "
+    return resultat
 
 
 

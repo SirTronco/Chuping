@@ -8,6 +8,8 @@
 #       • Limitar la impresió de linees
 #       • Bloquetjar la pantalla
 #       • Opcionar la informació que es veu
+#   - opcion -s que conecta a servidor para CHUPARRRRR los hosts de la base de datos
+#   - opcion -a que conecta a un servidor por API
 
 
 
@@ -159,12 +161,22 @@ def imprimemela(prefixe, host, resultat, ms, coloret, debug = ""):
     ip = ip.rjust(17)
 
     # Apliquem fondo segons l'ordre
-    fondoFluix = pantalla.on_color_rgb(50, 50, 50)
-    fondoFortet = pantalla.on_color_rgb(30, 30, 30)
-    fondo = fondoFluix
+    fondoLinia = pantalla.on_color_rgb(50, 50, 50)
+    fondoVERD = pantalla.on_color_rgb(50, 170, 50)
+    fondoROIG = pantalla.on_color_rgb(200, 50, 50)
+    fondoBLAU = pantalla.on_color_rgb(0, 000, 255)
+
     ordre = 0
     ordre=host["ordre"] 
-    if  ordre % 2 == 0: fondo = fondoFortet
+    if  ordre % 2 == 0:
+        fondoLinia = pantalla.on_color_rgb(30, 30, 30)
+        fondoVERD = pantalla.on_color_rgb(50, 140, 50)
+        fondoROIG = pantalla.on_color_rgb(170, 50, 50)
+        fondoBLAU = pantalla.on_color_rgb(0, 000, 215)
+
+    # Seleccionem el color de la linia, segons la resposta
+    coloret = fondoROIG
+    if resultat == "Resposta!": coloret = fondoVERD
 
     # Tenim que discernir si estem fent petició, o estem mostrat resultat
     if resultat != "":
@@ -180,8 +192,6 @@ def imprimemela(prefixe, host, resultat, ms, coloret, debug = ""):
         historial = historial.replace("", " ") # les añadimos espacios
         historial = historial.replace (".", f"{Fore.RED}█{Fore.LIGHTWHITE_EX}") # cambiamos y coloreamos a bloque color ROJO
 
-        historial = f"{fondo} " + historial
-
     else: # si no te resultat, entenem que estem imprint la linia de mostreig.
         fallos = ""
         ms = ""
@@ -190,10 +200,10 @@ def imprimemela(prefixe, host, resultat, ms, coloret, debug = ""):
 
     if ms !="": # si no tenim ms es perque encara no estem mostrant resultat
         ms = ms.center(7) 
-        ms = f"{Back.BLUE} {ms} "
+        ms = f"{fondoBLAU} {ms} "
 
     # preparem la traca final
-    imprimemelo = f"{fondo}{Fore.LIGHTWHITE_EX}{prefixe}{nom}. {ip}: {resultat}{fallos}{ms}{fondo}{historial}{debug}"
+    imprimemelo = f"{fondoLinia}{Fore.LIGHTWHITE_EX}{prefixe}{nom}. {ip}: {resultat}{fallos}{ms}{fondoLinia}{historial}{debug}"
 
     print( pantalla.move_yx(host["ordre"] + primeraLinia, 0) + imprimemelo )
 
